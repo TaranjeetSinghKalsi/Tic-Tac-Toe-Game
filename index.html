@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+</head>
+<style>
+    body {
+        background-color: rgb(255, 243, 227);
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        height: 45vmax;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #container {
+        /* position: inherit; */
+        /* left: 10px; */
+        display: grid;
+        /* grid-template-columns: 300px auto 100px; */
+        /* grid-template-columns: 2fr 5fr 1fr ; */
+        grid-template-columns: repeat(3, auto);
+        grid-row-gap: 0.1rem;
+        grid-column-gap: 0.1rem;
+
+        width: 80%;
+        height: 80%;
+        background-image: url("gridd.png");
+        background-repeat: no-repeat;
+        /* background-attachment: fixed; */
+        background-size: 40%;
+        /* background-size: 70vh; */
+        /* background-size: 35vmax; */
+        background-position: center;
+        /* height: 50vmax;
+        width: 50vmax; */
+
+        align-items: center;
+        justify-content: center;
+        align-content: center;
+        background-color: aliceblue;
+        padding: 1rem;
+        /* border-radius: 1rem; */
+        box-shadow: -10px 10px 5px rgb(137, 163, 170);
+    }
+
+    .item {
+        position: relative;
+        /* left: 3px;
+        top: 7px; */
+        /* border: 2px solid rgb(161, 152, 152); */
+
+        height: 10vmax;
+        width: 10vmax;
+        /*  background-image: url("o.png"); */
+        /* background-image: url("x.png"); */
+        background-size: 80%;
+        background-repeat: no-repeat;
+        background-position: center;
+
+    }
+
+    /* The status/alert box */
+    #status {
+        /* position: absolute; */
+        padding: 1rem;
+        font-size: large;
+        background-color: green;
+        color: white;
+        margin-bottom: 15px;
+        z-index: 1;
+    }
+
+
+    @media (max-width:800px) {
+        #container {
+            /* display: none; */
+            position: absolute;
+            top: 10px;
+            /* margin: 20px; */
+            width: 90%;
+            background-size: 90%;
+        }
+
+        #status {
+            position: absolute;
+            top: 40px;
+            font-size: 1.5rem;
+            /* margin: 10px; */
+        }
+        .item {
+    /* border: 2px solid black; */
+        /* height: 11ch;
+        width: 11ch; */
+        height: 28vw;
+        width: 28vw;
+        background-size: 80%;
+        background-repeat: no-repeat;
+        background-position: center;
+
+    }
+    }
+</style>
+
+<body>
+    <div id="status">
+        Player X's Turn
+    </div>
+    <div id="container">
+        <div id="1" onclick="chance(this);" class="item"></div>
+        <div id="2" onclick="chance(this);" class="item"></div>
+        <div id="3" onclick="chance(this);" class="item"></div>
+        <div id="4" onclick="chance(this);" class="item"></div>
+        <div id="5" onclick="chance(this);" class="item"></div>
+        <div id="6" onclick="chance(this);" class="item"></div>
+        <div id="7" onclick="chance(this);" class="item"></div>
+        <div id="8" onclick="chance(this);" class="item"></div>
+        <div id="9" onclick="chance(this);" class="item"></div>
+    </div>
+
+</body>
+<script>
+    var turn = 0; //0 -> PLayer X and 1 -> Player O
+    /*
+    There are 8 possible cases of winning positions
+
+    0, 1, 2
+    3, 4, 5
+    6, 7, 8
+
+    0, 3, 6
+    1, 4, 7
+    2, 5, 8
+
+    0, 4, 8
+    2, 4, 6
+
+    */
+    var arr = [-1, -1, -1, -1, -1, -1, -1, -1, -1];
+    var isAlive = true; //to stop game
+    function chance(itemObject) {
+        if (itemObject.style.backgroundImage === '' && isAlive) {
+            if (turn % 2 == 1) {
+                itemObject.style.backgroundImage = "url('o.png')";
+                document.getElementById("status").innerText = "Player X's Turn";
+            }
+            else {
+                itemObject.style.backgroundImage = "url('x.png')";
+                document.getElementById("status").innerText = "Player O's Turn";
+            }
+            arr[parseInt(itemObject.id) - 1] = turn % 2;
+            turn++;
+
+            isOver();
+        }
+    }
+
+    function isOver() {
+        if(turn==9){
+            document.getElementById("status").innerText = "Game is Draw ! Play Again ";
+            document.getElementById("status").innerHTML += "<button onclick='location.reload();' >&#8635;</button>"
+        }
+        
+        let winner = -1;
+        if ((arr[0] == arr[1] && arr[1] == arr[2] && arr[2] != -1) ||
+            (arr[3] == arr[4] && arr[4] == arr[5] && arr[5] != -1) ||
+            (arr[6] == arr[7] && arr[7] == arr[8] && arr[8] != -1) ||
+            (arr[0] == arr[3] && arr[3] == arr[6] && arr[6] != -1) ||
+            (arr[1] == arr[4] && arr[4] == arr[7] && arr[7] != -1) ||
+            (arr[2] == arr[5] && arr[5] == arr[8] && arr[8] != -1) ||
+            (arr[0] == arr[4] && arr[4] == arr[8] && arr[8] != -1) ||
+            (arr[2] == arr[4] && arr[4] == arr[6] && arr[6] != -1)) {
+
+            winner = turn % 2;
+        }
+
+        if (winner != -1) // if someone is won
+        {
+            isAlive = false;
+
+            if (winner == 1)
+                document.getElementById("status").innerText = "Player X has Won the Game ";
+            else
+                document.getElementById("status").innerText = "Player O has Won the Game ";
+            document.getElementById("status").innerHTML += "<button onclick='location.reload();' >&#8635;</button>"
+        }
+
+    }
+</script>
+
+</html>
